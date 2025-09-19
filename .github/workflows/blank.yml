@@ -1,0 +1,34 @@
+name: myapp
+
+# on:
+#   workflow_dispatch:
+on:
+  push:
+    branches:
+      - main
+jobs:
+  upload:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Place API Key
+        run: |
+          mkdir -p ~/.private_keys
+          echo "${{ secrets.APP_STORE_API_KEY }}" > ~/.private_keys/AuthKey_${{ secrets.APP_STORE_API_KEY_ID }}.p8
+          ls -la ~/.private_keys/
+      - name: Download IPA From URL
+        run: |
+          curl -L -o myapp.ipa http://appurl.ipa
+          ls -la myapp.ipa
+      - name: Upload to App Store
+        run: |
+          xcrun altool --upload-app \
+            -f "./myapp.ipa" \
+            -t ios \
+            --apiKey "${{ secrets.APP_STORE_API_KEY_ID }}" \
+            --apiIssuer "${{ secrets.APP_STORE_API_ISSUER_ID }}"
+
+      - name: Cleanup
+        if: always()
+        run: rm -f ~/.private_keys/AuthKey_${{ secrets.APP_STORE_API_KEY_ID }}.p8
