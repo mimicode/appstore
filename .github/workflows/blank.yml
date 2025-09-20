@@ -19,7 +19,7 @@ jobs:
           ls -la ~/.private_keys/
       - name: Download IPA From URL
         run: |
-          curl -L -o myapp.ipa http://appurl.ipa
+          curl -L -o myapp.ipa http://newappurl.ipa
           ls -la myapp.ipa
       - name: Upload to App Store
         run: |
